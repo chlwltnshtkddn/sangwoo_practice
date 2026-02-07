@@ -1,1 +1,32 @@
-/* Add styles here */
+:root {
+    --primary-color: #ffde00;
+    --secondary-color: #ff005d;
+    --background-color: #1a1a1a;
+    --text-color: #ffffff;
+    --input-bg-color: #333333;
+    --glow-color: rgba(255, 222, 0, 0.6);
+    --shadow-color: rgba(0, 0, 0, 0.4);
+
+    --font-display: 'Orbitron', sans-serif;
+    --font-body: 'Roboto', sans-serif;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><path fill="%23333333" fill-opacity="0.4" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"></path></svg>');
+}
+
+lottery-generator {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
