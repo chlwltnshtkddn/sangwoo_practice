@@ -192,7 +192,7 @@ class LotteryGenerator extends HTMLElement {
 
         for (let i = 0; i < maxAttempts; i++) {
             try {
-                const response = await fetch(`https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`);
+                const response = await fetch(`/api/lotto?drwNo=${drwNo}`);
                 const data = await response.json();
 
                 if (data.returnValue === 'success') {
