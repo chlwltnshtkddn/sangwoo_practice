@@ -7,11 +7,6 @@
         "firebase-tools@latest",
         "experimental:mcp"
       ]
-    },
-    "proxy": {
-      "command": "npm",
-      "args": ["start"],
-      "port": 3000
     }
   }
 }
