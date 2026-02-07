@@ -12,7 +12,7 @@
     --font-body: 'Roboto', sans-serif;
 }
 
-:root.light-mode {
+body.light-mode {
     --primary-color: #007bff;
     --secondary-color: #6c757d;
     --background-color: #f8f9fa;

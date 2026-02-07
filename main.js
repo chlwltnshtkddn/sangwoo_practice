@@ -7,11 +7,11 @@ class LotteryGenerator extends HTMLElement {
                 :host {
                     display: block;
                     padding: 40px;
-                    background: #2c2c2c;
+                    background: var(--background-color);
                     border-radius: 20px;
                     box-shadow: 
                         0 10px 25px var(--shadow-color), 
-                        0 5px 15px rgba(0,0,0,0.2);
+                        0 5px 15px var(--shadow-color);
                 }
 
                 h1 {
@@ -203,6 +203,14 @@ class LotteryGenerator extends HTMLElement {
                     const bonusNumber = data.bnusNo;
                     const roundNumber = data.drwNo;
                     const drawDate = data.drwNoDate;
+
+                    // Auto-populate previous numbers input fields
+                    const inputElements = this.shadowRoot.querySelectorAll('.number-inputs input');
+                    winningNumbers.forEach((num, index) => {
+                        if (inputElements[index]) {
+                            inputElements[index].value = num;
+                        }
+                    });
 
                     latestNumbersDisplay.innerHTML = `
                         <p>${roundNumber}회차 로또 당첨 번호 (${drawDate}):</p>
