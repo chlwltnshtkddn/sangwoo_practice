@@ -43,8 +43,10 @@ body.light-mode {
 
 /* Theme Toggle Button Styling */
 .theme-toggle {
-    text-align: right;
-    margin-bottom: 20px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000; /* Ensure it's above other content */
 }
 
 .theme-toggle button {
