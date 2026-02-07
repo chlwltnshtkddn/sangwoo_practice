@@ -53,7 +53,7 @@ class DinnerRecommender extends HTMLElement {
                     font-size: 1.5rem;
                     padding: 15px 40px;
                     background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-                    color: #111;
+                    color: var(--text-color-button); /* Use new variable for button text color */
                     border: none;
                     border-radius: 10px;
                     cursor: pointer;

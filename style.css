@@ -7,6 +7,7 @@
     --glow-color: rgba(255, 222, 0, 0.6);
     --shadow-color: rgba(0, 0, 0, 0.4);
     --border-color: #444;
+    --text-color-button: #111; /* Default for dark mode */
 
     --font-display: 'Orbitron', sans-serif;
     --font-body: 'Roboto', sans-serif;
@@ -21,6 +22,7 @@ body.light-mode {
     --glow-color: rgba(0, 123, 255, 0.3);
     --shadow-color: rgba(0, 0, 0, 0.1);
     --border-color: #ced4da;
+    --text-color-button: #ffffff; /* For light mode, buttons will have white text */
 }
 
 body {
