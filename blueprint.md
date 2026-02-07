@@ -35,3 +35,7 @@ This ensures that the generated numbers have a degree of statistical independenc
     *   Add event listeners for the "Generate" button.
     *   Write the core lottery number generation logic, including the function to get all triplets from a set of numbers and the validation logic to exclude forbidden triplets.
     *   Dynamically render the generated numbers to the UI.
+
+## Project Status
+
+*   Initial project files (`index.html`, `style.css`, `main.js`, `blueprint.md`) have been committed and pushed to the GitHub repository: `https://github.com/chlwltnshtkddn/sangwoo_practice`.
