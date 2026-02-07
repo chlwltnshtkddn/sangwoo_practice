@@ -110,10 +110,14 @@ class LotteryGenerator extends HTMLElement {
                 }
             </style>
 
-            <h1>Lottery Number Generator</h1>
+            <div class="theme-toggle">
+                <button id="theme-toggle-btn">다크 모드 전환</button>
+            </div>
+
+            <h1>로또 번호 생성기</h1>
             
             <div class="input-section">
-                <h2>Enter Last Week's Winning Numbers</h2>
+                <h2>지난주 로또 당첨 번호 입력</h2>
                 <div class="number-inputs">
                     <input type="number" min="1" max="45">
                     <input type="number" min="1" max="45">
@@ -123,19 +127,103 @@ class LotteryGenerator extends HTMLElement {
                     <input type="number" min="1" max="45">
                 </div>
                 <div class="controls">
-                    <button id="generate-btn">Generate Numbers</button>
+                    <button id="generate-btn">번호 생성</button>
                 </div>
             </div>
 
             <div class="output-section">
-                <h2>Your New Numbers</h2>
-                <div class="result-display">
+                <h2>나의 로또 번호</h2>
+                <div class="generated-numbers-container">
                     <!-- Generated numbers will be injected here -->
+                </div>
+            </div>
+
+            <div class="latest-winning-numbers-section">
+                <h2>최신 로또 당첨 번호</h2>
+                <div class="latest-numbers-display">
+                    <!-- Latest winning numbers will be injected here -->
+                    <p>로딩 중...</p>
                 </div>
             </div>
         `;
 
         this.shadowRoot.getElementById('generate-btn').addEventListener('click', () => this.generateLotteryNumbers());
+        
+        const themeToggleBtn = this.shadowRoot.getElementById('theme-toggle-btn');
+        themeToggleBtn.addEventListener('click', () => this.toggleTheme());
+        
+        // Apply saved theme or system preference on load
+        this.applyTheme();
+
+        this.fetchLatestWinningNumbers(); // Call to fetch latest numbers on load
+    }
+
+    applyTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || (savedTheme === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.body.classList.add('dark-mode');
+            this.shadowRoot.getElementById('theme-toggle-btn').textContent = '라이트 모드 전환';
+        } else {
+            document.body.classList.remove('dark-mode');
+            this.shadowRoot.getElementById('theme-toggle-btn').textContent = '다크 모드 전환';
+        }
+    }
+
+    toggleTheme() {
+        if (document.body.classList.contains('dark-mode')) {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('theme', 'light');
+            this.shadowRoot.getElementById('theme-toggle-btn').textContent = '다크 모드 전환';
+        } else {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark');
+            this.shadowRoot.getElementById('theme-toggle-btn').textContent = '라이트 모드 전환';
+        }
+    }
+
+    async fetchLatestWinningNumbers() {
+        const latestNumbersDisplay = this.shadowRoot.querySelector('.latest-numbers-display');
+        latestNumbersDisplay.innerHTML = '<p>로딩 중...</p>'; // Show loading message
+
+        // Start from a reasonably high number and decrement to find the latest successful draw
+        let drwNo = 1210; // Based on current date, this should be close to the latest
+        let found = false;
+        const maxAttempts = 10; // Prevent infinite loops
+
+        for (let i = 0; i < maxAttempts; i++) {
+            try {
+                const response = await fetch(`https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${drwNo}`);
+                const data = await response.json();
+
+                if (data.returnValue === 'success') {
+                    const winningNumbers = [
+                        data.drwtNo1, data.drwtNo2, data.drwtNo3,
+                        data.drwtNo4, data.drwtNo5, data.drwtNo6
+                    ].sort((a, b) => a - b);
+                    const bonusNumber = data.bnusNo;
+                    const roundNumber = data.drwNo;
+                    const drawDate = data.drwNoDate;
+
+                    latestNumbersDisplay.innerHTML = `
+                        <p>${roundNumber}회차 로또 당첨 번호 (${drawDate}):</p>
+                        <div class="result-display">
+                            ${winningNumbers.map(num => `<div class="result-number">${num}</div>`).join('')}
+                            <div class="bonus-number-label">+ 보너스</div>
+                            <div class="result-number bonus-number">${bonusNumber}</div>
+                        </div>
+                    `;
+                    found = true;
+                    break;
+                }
+            } catch (error) {
+                console.error('Error fetching lottery numbers:', error);
+            }
+            drwNo--; // Decrement round number and try again
+        }
+
+        if (!found) {
+            latestNumbersDisplay.innerHTML = '<p>최신 당첨 번호를 가져오는데 실패했습니다. 잠시 후 다시 시도해주세요.</p>';
+        }
     }
 
     generateLotteryNumbers() {
@@ -143,25 +231,29 @@ class LotteryGenerator extends HTMLElement {
         const previousNumbers = inputs.map(input => parseInt(input.value)).filter(val => !isNaN(val) && val >= 1 && val <= 45);
 
         if (previousNumbers.length !== 6) {
-            alert('Please enter all 6 winning numbers from the previous week.');
+            alert('지난주 당첨 번호 6개를 모두 입력해 주세요.');
             return;
         }
 
         const forbiddenTriplets = this.getCombinations(previousNumbers, 3);
+        const generatedSets = [];
 
-        let newNumbers;
-        let isValid = false;
+        for (let i = 0; i < 5; i++) { // Generate 5 sets
+            let newNumbers;
+            let isValid = false;
 
-        while (!isValid) {
-            newNumbers = this.generateRandomNumbers();
-            const newTriplets = this.getCombinations(newNumbers, 3);
-            
-            isValid = !newTriplets.some(newTriplet => 
-                forbiddenTriplets.some(forbiddenTriplet => this.isSameCombination(newTriplet, forbiddenTriplet))
-            );
+            while (!isValid) {
+                newNumbers = this.generateRandomNumbers();
+                const newTriplets = this.getCombinations(newNumbers, 3);
+                
+                isValid = !newTriplets.some(newTriplet => 
+                    forbiddenTriplets.some(forbiddenTriplet => this.isSameCombination(newTriplet, forbiddenTriplet))
+                );
+            }
+            generatedSets.push(newNumbers);
         }
 
-        this.displayNumbers(newNumbers);
+        this.displayMultipleNumbers(generatedSets);
     }
 
     generateRandomNumbers() {
@@ -196,10 +288,24 @@ class LotteryGenerator extends HTMLElement {
         return sorted1.every((val, index) => val === sorted2[index]);
     }
 
-    displayNumbers(numbers) {
-        const display = this.shadowRoot.querySelector('.result-display');
-        display.innerHTML = numbers.map(num => `<div class="result-number">${num}</div>`).join('');
+    displayMultipleNumbers(numberSets) {
+        const container = this.shadowRoot.querySelector('.generated-numbers-container');
+        container.innerHTML = ''; // Clear previous results
+
+        numberSets.forEach((numbers, index) => {
+            const setDisplay = document.createElement('div');
+            setDisplay.classList.add('result-set');
+            setDisplay.innerHTML = `
+                <span class="set-label">세트 ${index + 1}:</span>
+                <div class="result-display">
+                    ${numbers.map(num => `<div class="result-number">${num}</div>`).join('')}
+                </div>
+            `;
+            container.appendChild(setDisplay);
+        });
     }
 }
 
 customElements.define('lottery-generator', LotteryGenerator);
+
+

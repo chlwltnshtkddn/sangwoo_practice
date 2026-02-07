@@ -27,15 +27,37 @@ This ensures that the generated numbers have a degree of statistical independenc
 
 ### Current Plan:
 
-1.  **Create `index.html`:** Set up the main HTML structure, including the `<lottery-generator>` custom element.
-2.  **Create `style.css`:** Implement the modern and bold visual design with responsive styles, custom fonts, and color variables.
-3.  **Create `main.js`:**
-    *   Define the `LotteryGenerator` class as a custom `HTMLElement`.
-    *   Implement the Shadow DOM to encapsulate the component's style and structure.
-    *   Add event listeners for the "Generate" button.
-    *   Write the core lottery number generation logic, including the function to get all triplets from a set of numbers and the validation logic to exclude forbidden triplets.
-    *   Dynamically render the generated numbers to the UI.
+The following features will be implemented:
 
-## Project Status
+1.  **Korean Localization:**
+    *   Modify `index.html`: Translate all visible English text (labels, buttons, titles, instructions) to Korean.
+    *   Modify `main.js`: Translate any dynamic text, console logs, or internal strings that are user-facing.
+
+2.  **Generate 5 Sets of Numbers:**
+    *   Modify `main.js`:
+        *   Adjust the number generation logic to run 5 times.
+        *   Update the `LotteryGenerator` Web Component's rendering logic to display 5 distinct sets of lottery numbers, each in its own container.
+    *   Modify `style.css`: Ensure the layout properly accommodates and displays 5 sets of numbers in a visually appealing way (e.g., using flexbox or grid).
+
+3.  **Fetch Latest Winning Numbers:**
+    *   Research API/Scraping: Use `google_web_search` to find a reliable source (API or a consistent website structure for scraping) for Korean Lotto 6/45 winning numbers, including the bonus ball.
+    *   Modify `main.js`:
+        *   Implement `fetch` API call to retrieve the latest winning numbers.
+        *   Parse the response to extract the winning numbers and bonus number.
+        *   Add a display area within the Web Component for these fetched numbers, formatted as "X,XXX회차 로또 당첨번호 : X,X,X,X,X,X (2등 행운번호: X)".
+        *   Handle potential errors during the fetch operation (e.g., network issues, API changes).
+
+4.  **Dark/Light Mode:**
+    *   Modify `index.html` (or `main.js` for Shadow DOM):
+        *   Add a toggle button (e.g., a switch or a simple button) to activate/deactivate dark mode.
+    *   Modify `style.css`:
+        *   Define CSS custom properties (variables) for colors (e.g., `--background-color`, `--text-color`, `--primary-color`).
+        *   Create a `prefers-color-scheme` media query for initial system theme detection.
+        *   Define a `.dark-mode` class (or similar) that overrides these CSS variables for dark mode.
+    *   Modify `main.js`:
+        *   Implement JavaScript logic to toggle the `.dark-mode` class on the `<body>` or the Web Component's host element.
+        *   Store the user's preference in `localStorage` to persist the chosen theme across sessions.
+
+### Project Status
 
 *   Initial project files (`index.html`, `style.css`, `main.js`, `blueprint.md`) have been committed and pushed to the GitHub repository: `https://github.com/chlwltnshtkddn/sangwoo_practice`.
